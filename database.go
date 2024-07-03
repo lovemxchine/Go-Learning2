@@ -31,8 +31,11 @@ func getTask(id int) (Task, error) {
 	return t, nil
 }
 
-func getTasks() ([]Task, error) {
-	rows, err := db.Query("SELECT id , user_id, task_name , created_at , updated_at ,status FROM tasks ORDER BY id ASC;")
+func getTasks(id int) ([]Task, error) {
+	rows, err := db.Query(
+		`SELECT id , user_id, task_name , created_at , updated_at ,status 
+		FROM tasks WHERE user_id = $1 
+		ORDER BY id ASC;`, id)
 	if err != nil {
 		log.Fatal(err)
 	}

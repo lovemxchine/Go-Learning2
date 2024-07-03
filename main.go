@@ -77,11 +77,13 @@ func main() {
 	// <Create> Create data
 	app.Post("/createTask", createTaskHandler)
 	// <Read> Get data params
-	app.Get("/getTask/:id", getTaskHandle)
+	app.Get("/getTask/:id", getTaskHandler)
 	// <Update> Update data
 	app.Put("/updateTask/:id", updateTaskHandler)
 	// <Delete> Delete Data
 	app.Delete("/deleteTask/:id", deleteTaskHandler)
+	// <Read> Get many data params
+	app.Get("/getTasks/:id", getTasksHandler)
 
 	app.Listen(":8080")
 
@@ -93,7 +95,7 @@ func main() {
 
 }
 
-func getTaskHandle(c *fiber.Ctx) error {
+func getTaskHandler(c *fiber.Ctx) error {
 	taskId, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
@@ -145,4 +147,16 @@ func deleteTaskHandler(c *fiber.Ctx) error {
 	}
 	return c.SendStatus(fiber.StatusNoContent)
 
+}
+
+func getTasksHandler(c *fiber.Ctx) error {
+	userId, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
+	}
+	task, err := getTasks(userId)
+	if err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
+	}
+	return c.JSON(task)
 }
