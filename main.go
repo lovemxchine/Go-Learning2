@@ -143,6 +143,6 @@ func deleteTaskHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
 	}
-	return c.JSON("Delete Complete")
+	return c.SendStatus(fiber.StatusNoContent)
 
 }
