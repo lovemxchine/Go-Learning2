@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 )
@@ -64,11 +65,23 @@ func updateTask(id int, task *UpdateTask) error {
 }
 
 func deleteTask(id int) error {
-
-	_, err := db.Exec(
+	result, err := db.Exec(
 		"DELETE FROM tasks WHERE id = $1",
 		id,
 	)
 
-	return err
+	if err != nil {
+		return err
+	}
+	// RowsAffected คือนับว่ามี rows ไหนที่มีการเปลี่ยนแปลงบ้างถ้าไม่มีสักอันคือไม่มี id ที่ลบไป
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no task with id %d found", id)
+	}
+
+	return nil
 }

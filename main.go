@@ -81,7 +81,7 @@ func main() {
 	// <Update> Update data
 	app.Put("/updateTask/:id", updateTaskHandler)
 	// <Delete> Delete Data
-	// app.Delete()
+	app.Delete("/deleteTask/:id", deleteTaskHandler)
 
 	app.Listen(":8080")
 
@@ -120,15 +120,29 @@ func createTaskHandler(c *fiber.Ctx) error {
 func updateTaskHandler(c *fiber.Ctx) error {
 	updateTaskData := new(UpdateTask)
 	taskId, err := strconv.Atoi(c.Params("id"))
-	if err := c.BodyParser(updateTaskData); err != nil {
-		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
-	}
 	if err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
 	}
+	if err := c.BodyParser(updateTaskData); err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
+	}
+
 	err = updateTask(taskId, updateTaskData)
 	if err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
 	}
 	return c.JSON(updateTaskData)
+}
+
+func deleteTaskHandler(c *fiber.Ctx) error {
+	taskId, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
+	}
+	err = deleteTask(taskId)
+	if err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).SendString(err.Error())
+	}
+	return c.JSON("Delete Complete")
+
 }
